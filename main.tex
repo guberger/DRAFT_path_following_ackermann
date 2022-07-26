@@ -2,6 +2,7 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
 \usepackage{array}
 \usepackage{enumitem}
 \usepackage[left=3.5cm,right=3.5cm,top=2cm,bottom=2cm]{geometry}
@@ -78,18 +79,18 @@ Given a state $(x,y,v,\theta)$ of the car, let $s$
 minimize the distance between $(x,y)$ and $(\xbar(s),\ybar(s))$.
 We let
 \[
-\alpha:\theta-\thetabar(s), \quad \delta:-(x-\xbar(s))\sin(\thetabar(s))+(y-\ybar(s))\cos(\theta)
+\alpha=\theta-\thetabar(s), \quad \delta=-(x-\xbar(s))\sin(\thetabar(s))+(y-\ybar(s))\cos(\theta)
 \]
 be the difference in orientation angle and the distance
 of the car to the path (positive if it is on the left and negative if it is on the right) respectively.
 The dynamics of $\delta$ and $\alpha$ satisfies
 \begin{equation}\label{eq-following}
-\dot\delta = v\sin(\alpha), \quad \dot\alpha = \frac{v\tan(u_2)}L - \frac{v\cos(\delta)\kappa(s)}{1-\delta\kappa(s)}.
+\dot\delta = v\sin(\alpha), \quad \dot\alpha = \frac{v\tan(u_2)}L - \frac{v\cos(\alpha)\kappa(s)}{1-\delta\kappa(s)}.
 \end{equation}
 
 \begin{definition}
 \emph{Safe path following} amounts to steer $(\delta,\alpha)$ to $(0,0)$
-while staying in some bounded ``safe'' region $\calD:[-\deltamax,\deltamax]\times[-\alphamax,\alphamax]$.
+while staying in some bounded ``safe'' region $\calD\coloneqq[-\deltamax,\deltamax]\times[-\alphamax,\alphamax]$.
 \end{definition}
 
 \subsection{Control Lyapunov Function}
@@ -104,8 +105,8 @@ satisfying that $V(0,0)=0$, $V(\delta,\alpha)>0$ if $(\delta,\alpha)\neq(0,0)$ a
 \quad\text{s.t.}\quad \dot{V}(\delta,\alpha,u_2) < 0,
 \end{equation}
 where
-$\dot{V}:\frac{\partial V}{\partial\delta}\dot\delta+\frac{\partial V}{\partial\alpha}\dot\alpha$
-and $\dot\delta$, $\dot\alpha$ obey Eq.~\eqref{eq-following}.
+$\dot{V}=\frac{\partial V}{\partial\delta}\dot\delta+\frac{\partial V}{\partial\alpha}\dot\alpha$,
+and $\dot\delta$ and $\dot\alpha$ obey Eq.~\eqref{eq-following}.
 \end{definition}
 
 \subsection{Outline of the Paper}
@@ -169,7 +170,7 @@ The \emph{rate of convergence} of $V$ is defined as the smallest $\gamma>0$ s.t.
 \end{definition}
 
 It holds that for any initial state $(\delta_0,\theta_0)\in\calR$,
-there is a control sequence $u_2(t)$ satisfying
+there is a control sequence $u_2(\cdot)$ satisfying
 $V(\delta_t,\alpha_t)\leq e^{-\gamma vt}V(\delta_0,\alpha_0)$
 where $(\delta_t,\alpha_t)$ is the state of the controlled system at time $t\geq0$.
 
@@ -184,7 +185,7 @@ If $\sopt<\smax$, then one can exploit the gap $\tan(\smax)-\tan(\sopt)$
 to follow a path with curvature $\kappa(s)$ bounded as follows.
 
 \begin{theorem}\label{thm-straight-curved}
-If $\lvert\kappa(s)\rvert\leq \frac{\tan(\smax)-\tan(\sopt)}{L+\deltamax}$, then $V$ is a CLF for Eq.~\ref{eq-following}.
+If $\lvert\kappa(s)\rvert\leq \frac{\tan(\smax)-\tan(\sopt)}{L+\deltamax}$, then $V$ is a CLF for Eq.~\eqref{eq-following}.
 \end{theorem}
 
 \begin{proof}
@@ -194,10 +195,10 @@ $\lvert\frac{\cos(\alpha)\kappa(s)}{1-\delta\kappa(s)}\rvert\leq
 Thus, if $\frac{\lvert\kappa(s)\rvert}{1-\deltamax\lvert\kappa(s)\rvert}<\frac{\tan(\smax)-\tan(\sopt)}L$,
 one can use the steering input
 \[
-\uhat_2:\arctan\left(\tan(\ubar_2)+\frac{L\lvert\kappa(s)\rvert}{1-\deltamax\lvert\kappa(s)\rvert}\right),
+\uhat_2\coloneqq\arctan\left(\tan(\ubar_2)+\frac{L\cos(\alpha)\kappa(s)}{1-\delta\kappa(s)}\right),
 \]
 where $\ubar_2\in[-\sopt,\sopt]$ satisfies $\dot{V}(\delta,\alpha,\ubar_2)<0$
-where $\dot\delta$, $\dot\alpha$ obey Eq.~\eqref{eq-following} with $\kappa(s)=0$.
+with $\dot\delta$ and $\dot\alpha$ obeying Eq.~\eqref{eq-following} with $\kappa(s)=0$.
 It holds that $\lvert\uhat_2\rvert\leq\smax$.
 Moreover, Eq.~\eqref{eq-following} with input $u_2=\uhat_2$
 is the same as Eq.~\eqref{eq-following} with curvature $\kappa(s)=0$ and input $u_2=\ubar_2$.
@@ -218,20 +219,20 @@ then $V$ is a CLF for Eq.~\eqref{eq-following} with safe region $[-\delta_*,\del
 Without loss of generality, we assume that the ROA $\calR$
 of $V$ corresponds to its $1$-sublevel set.
 
-For each $\beta\in[-\alphamax,\alphamax]$, we define $r(\beta)$ as the largest sublevel set of $V$
-so that any state in this set remains in $\calR$ after a perturbation $\beta$ of $\alpha$:
+For each $\beta\in\Re$, we define $r(\beta)$ as the largest sublevel set of $V$
+so that any state in this set remains in $\calR$ after a perturbation $\beta$ of $\alpha$: i.e.,
 \[
-r(\beta) : \inf\,\{V(\delta,\alpha):V(\delta,\alpha+\beta)>1\}.
+r(\beta)=\inf\,\{V(\delta,\alpha):V(\delta,\alpha+\beta)>1\}.
 \]
 
-Let $s$ be a nonderivable point in the path with $\beta:\lvert\thetabar(s+)-\thetabar(s-)\rvert$.
+Let $s$ be a non-derivable point in the path and denote $\beta=\thetabar(s+)-\thetabar(s-)$.
 Assume that when approaching $s$, $(\delta,\alpha)$ satisfies $V(\delta-,\alpha-)\leq r(\beta)$.
 Then, it holds that just after passing $s$,
 $(\delta,\alpha)$ is still in $\calR$, i.e., satisfies $V(\delta+,\alpha+)\leq1$.
-(The proof is straightforward from the observation that $\alpha+=(\alpha-)\pm\beta$.)
+(The proof is straightforward from the observation that $\alpha+=(\alpha-)+\beta$.)
 
 Now, consider a path made of straight segments (indexed by $k:1,2,\ldots$) with length $\ell_k$
-and orientation changes $\beta_k:\thetabar_{k+1}-\thetabar_k$.
+and orientation changes $\beta_k\coloneqq\thetabar_{k+1}-\thetabar_k$.
 
 \begin{theorem}\label{thm-nonsmooth-safety}
 Assume that for all $k$, $\ell_k-\deltamax\geq\frac{\log(r(\beta_k))}\gamma$.
@@ -247,7 +248,7 @@ Moreover, assume that the closest point on the segment is at a distance
 at most $\deltamax$ from the beginning of the segment.
 Then, using the CLF $V$, we can steer the state toward the end of the segment,
 that is, until the closest point on the segment corresponds to its end.
-This will take at least $t_k:(\ell_k-\deltamax)/v$ units of time.
+This will take at least $t_k\coloneqq(\ell_k-\deltamax)/v$ units of time.
 At that moment, it will hold that $V(\delta,\alpha)\leq e^{-\gamma vt_k}\leq r(\beta_k)$,
 where the second inequality follows from the assumption on $\ell_k$.
 Thus, by definition of $r(\beta_k)$, it follows that at the beginning of
@@ -282,7 +283,7 @@ Let $V$ be a straight path following CLF that is positively homogeneous of degre
 
 The ROA $\calR$ of $V$ is its $\nu$-sublevel set where
 \[
-\nu:\min_{(\delta,\alpha)\in\mathrm{bd}\,\calD} V(\delta,\alpha).
+\nu=\min_{(\delta,\alpha)\in\mathrm{bd}\,\calD} V(\delta,\alpha).
 \]
 Indeed, $V(\delta,\alpha)\leq\nu$ implies that $V(\lambda\delta,\lambda\nu)<\nu$
 for all $\lambda\in[0,1)$ so that $(\delta,\alpha)$ must be inside $\calD$ by definition of $\nu$.
@@ -336,7 +337,7 @@ The value of $\sopt(p)$ and $\gamma(p)$ can be obtained by solving
 Eqs.~\eqref{eq-max-sopt-boundary} and~\eqref{eq-gamma}.
 Now, the requirement for the ROA is enforced by computing
 \[
-\mu(p):\max_{(\delta,\alpha)\in\mathrm{bd}\,\calIreq}\,V(\delta,\alpha)
+\mu(p)\coloneqq\max_{(\delta,\alpha)\in\mathrm{bd}\,\calIreq}\,V(\delta,\alpha)
 \]
 and requiring that $\mu(p)\leq\nu(p)$.
 This suggests Algorithm~\ref{alg-find-clf} to find a CLF with the desired properties.
